@@ -25,7 +25,16 @@ public class OldChunkStorage {
         levelChunk.data = new OldDataLayer(tag.getByteArray("Data"), DATALAYER_BITS);
         levelChunk.skyLight = new OldDataLayer(tag.getByteArray("SkyLight"), DATALAYER_BITS);
         levelChunk.blockLight = new OldDataLayer(tag.getByteArray("BlockLight"), DATALAYER_BITS);
-        levelChunk.heightmap = tag.getByteArray("HeightMap");
+        try {
+                levelChunk.heightmap = tag.getIntArray("HeightMap");    
+        } catch (Exception e) {
+            byte[] byteArray = tag.getByteArray("HeightMap");
+            int[] intArray = new int[byteArray.length];
+
+            for (int i = 0; i < byteArray.length; intArray[i] = byteArray[i++]);
+                levelChunk.heightmap = intArray;
+        }
+
         levelChunk.terrainPopulated = tag.getBoolean("TerrainPopulated");
         levelChunk.entities = (ListTag<CompoundTag>) tag.getList("Entities");
         levelChunk.tileEntities = (ListTag<CompoundTag>) tag.getList("TileEntities");
@@ -56,11 +65,16 @@ public class OldChunkStorage {
                 for (int y = 0; y < 16 && allAir; y++) {
                     for (int z = 0; z < 16; z++) {
                         int pos = (x << 11) | (z << 7) | (y + (yBase << 4));
-                        int block = data.blocks[pos];
+                        try {
+                         int block = data.blocks[pos];
                         if (block != 0) {
                             allAir = false;
                             break;
+                        }   
+                        }catch (Exception e) {
+                          //???  
                         }
+ 
                     }
                 }
             }
@@ -126,7 +140,7 @@ public class OldChunkStorage {
         public long lastUpdated;
         public boolean lastSaveHadEntities;
         public boolean terrainPopulated;
-        public byte[] heightmap;
+        public int[] heightmap;
         public OldDataLayer blockLight;
         public OldDataLayer skyLight;
         public OldDataLayer data;

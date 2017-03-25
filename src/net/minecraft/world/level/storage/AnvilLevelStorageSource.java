@@ -27,7 +27,7 @@ public class AnvilLevelStorageSource {
 
         // check if there is old file format level data
         CompoundTag levelData = getDataTagFor(levelId);
-        if (levelData == null || levelData.getInt("version") != AnvilLevelStorage.MCREGION_VERSION_ID) {
+        if (levelData == null) {
             return false;
         }
 
@@ -67,7 +67,7 @@ public class AnvilLevelStorageSource {
         if (!dir.exists()) return;
 
         File dataFile = new File(dir, "level.dat");
-        if (dataFile.exists()) {
+        if (!dataFile.exists()) {
             try {
                 CompoundTag root = new CompoundTag();
                 root.put("Data", dataTag);
