@@ -12,7 +12,7 @@ import java.io.File;
 public class AnvilConverter {
 
     public static void main(String[] args) {
-    //String[] args = {"/Users/jazzwhistle/PocketMine/worlds","bcspawn"};
+
         File baseFolder;
         try {
             baseFolder = new File(args[0]);
