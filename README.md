@@ -4,7 +4,7 @@ A tool to convert .mcr mcregion worlds to .mca anvil format
 
 Usage:
 
-```java -jar "/Users/jazzwhistle/NetBeansProjects/dist/AnvilConverter.jar" /PathTo/PocketMine/worlds worldtoconvert```
+```java -jar "/PathTo/AnvilConverter.jar" /PathTo/PocketMine/worlds worldtoconvert```
 
 
 The original .mcr files will be untouched, and the original level.dat renamed to level.dat_mcr
