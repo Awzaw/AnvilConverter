@@ -66,6 +66,7 @@ public class RegionFile {
 
     public static final String ANVIL_EXTENSION = ".mca";
     public static final String MCREGION_EXTENSION = ".mcr";
+    public static final String PMANVIL_EXTENSION = ".mcapm";
 
     private static final int VERSION_GZIP = 1;
     private static final int VERSION_DEFLATE = 2;

@@ -36,7 +36,8 @@ public class AnvilConverter {
             return;
         }
 
-        System.out.println("Converting map!");
+        System.out.println("Converting map to " + args[2]);
+        System.out.println("Format: " + (args[2].equalsIgnoreCase("pmanvil") ? "pmanvil" : "anvil"));
         storage.convertLevel(args[1], new ProgressListener() {
             private long timeStamp = System.currentTimeMillis();
 
@@ -55,7 +56,7 @@ public class AnvilConverter {
 
             public void progressStage(String string) {
             }
-        });
+        }, (args[2].equalsIgnoreCase("pmanvil") ? "pmanvil" : "anvil"));
         System.out.println("Done!");
         System.out.println("To revert, replace level.dat with level.dat_mcr. Old mcr region files have not been modified.");
     }

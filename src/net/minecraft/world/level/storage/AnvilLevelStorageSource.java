@@ -79,7 +79,7 @@ public class AnvilLevelStorageSource {
         }
     }
 
-    public boolean convertLevel(String levelId, ProgressListener progress) {
+    public boolean convertLevel(String levelId, ProgressListener progress, String format) {
 
         progress.progressStagePercentage(0);
 
@@ -110,16 +110,16 @@ public class AnvilLevelStorageSource {
         CompoundTag levelData = getDataTagFor(levelId);
 
         // convert normal world
-        convertRegions(new File(baseFolder, "region"), normalRegions, null, 0, totalCount, progress);
+        convertRegions(new File(baseFolder, "region"), normalRegions, null, 0, totalCount, progress, format);
         // convert hell world
-        convertRegions(new File(netherFolder, "region"), netherRegions, null, normalRegions.size(), totalCount, progress);
+        convertRegions(new File(netherFolder, "region"), netherRegions, null, normalRegions.size(), totalCount, progress, format);
         // convert end world
-        convertRegions(new File(enderFolder, "region"), enderRegions, null, normalRegions.size() + netherRegions.size(), totalCount, progress);
+        convertRegions(new File(enderFolder, "region"), enderRegions, null, normalRegions.size() + netherRegions.size(), totalCount, progress, format);
 
         makeMcrLevelDatBackup(levelId);
 
         levelData.putInt("version", AnvilLevelStorage.ANVIL_VERSION_ID);
-        saveDataTag(levelId, levelData);
+        saveDataTag(levelId, levelData);     
 
         return true;
     }
@@ -143,10 +143,10 @@ public class AnvilLevelStorageSource {
         }
     }
 
-    private void convertRegions(File baseFolder, ArrayList<File> regionFiles, BiomeSource biomeSource, int currentCount, int totalCount, ProgressListener progress) {
+    private void convertRegions(File baseFolder, ArrayList<File> regionFiles, BiomeSource biomeSource, int currentCount, int totalCount, ProgressListener progress, String format) {
 
         for (File regionFile : regionFiles) {
-            convertRegion(baseFolder, regionFile, biomeSource, currentCount, totalCount, progress);
+            convertRegion(baseFolder, regionFile, biomeSource, currentCount, totalCount, progress, format);
 
             currentCount++;
             int percent = (int) Math.round(100.0d * (double) currentCount / (double) totalCount);
@@ -155,13 +155,13 @@ public class AnvilLevelStorageSource {
 
     }
 
-    private void convertRegion(File baseFolder, File regionFile, BiomeSource biomeSource, int currentCount, int totalCount, ProgressListener progress) {
+    private void convertRegion(File baseFolder, File regionFile, BiomeSource biomeSource, int currentCount, int totalCount, ProgressListener progress, String format) {
 
         try {
             String name = regionFile.getName();
-            System.out.println("Converting... " + name);
+            System.out.println("Converting... " + name + " to " + (format.equalsIgnoreCase("pmanvil") ? RegionFile.PMANVIL_EXTENSION : RegionFile.ANVIL_EXTENSION));
             RegionFile regionSource = new RegionFile(regionFile);
-            RegionFile regionDest = new RegionFile(new File(baseFolder, name.substring(0, name.length() - RegionFile.MCREGION_EXTENSION.length()) + RegionFile.ANVIL_EXTENSION));
+            RegionFile regionDest = new RegionFile(new File(baseFolder, name.substring(0, name.length() - RegionFile.MCREGION_EXTENSION.length()) + (format == "pmanvil" ? RegionFile.PMANVIL_EXTENSION : RegionFile.ANVIL_EXTENSION)));
 
             for (int x = 0; x < 32; x++) {
                 for (int z = 0; z < 32; z++) {
@@ -181,7 +181,12 @@ public class AnvilLevelStorageSource {
                             CompoundTag tag = new CompoundTag();
                             CompoundTag levelData = new CompoundTag();
                             tag.put("Level", levelData);
-                            OldChunkStorage.convertToAnvilFormat(oldChunk, levelData, biomeSource);
+                            if (format.equalsIgnoreCase("pmanvil")){
+                              OldChunkStorage.convertToPMAnvilFormat(oldChunk, levelData, biomeSource);   
+                            } else {
+                              OldChunkStorage.convertToAnvilFormat(oldChunk, levelData, biomeSource);   
+                            }
+                           
 
                             DataOutputStream chunkDataOutputStream = regionDest.getChunkDataOutputStream(x, z);
                             NbtIo.write(tag, chunkDataOutputStream);
