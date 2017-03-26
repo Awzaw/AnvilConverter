@@ -159,7 +159,7 @@ public class AnvilLevelStorageSource {
 
         try {
             String name = regionFile.getName();
-
+            System.out.println("Converting... " + name);
             RegionFile regionSource = new RegionFile(regionFile);
             RegionFile regionDest = new RegionFile(new File(baseFolder, name.substring(0, name.length() - RegionFile.MCREGION_EXTENSION.length()) + RegionFile.ANVIL_EXTENSION));
 
