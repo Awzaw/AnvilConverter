@@ -2,13 +2,13 @@ package com.mojang.nbt;
 
 /**
  * Copyright Mojang AB.
- * 
+ *
  * Don't do evil.
  */
-
 import java.io.*;
 
 public abstract class Tag {
+
     public static final byte TAG_End = 0;
     public static final byte TAG_Byte = 1;
     public static final byte TAG_Short = 2;
@@ -84,28 +84,37 @@ public abstract class Tag {
     }
 
     public String getName() {
-        if (name == null) return "";
+        if (name == null) {
+            return "";
+        }
         return name;
     }
 
     public static Tag readNamedTag(DataInput dis) throws IOException {
         byte type = dis.readByte();
-        if (type == 0) return new EndTag();
-
-        String name = dis.readUTF();// new String(bytes, "UTF-8");
-
-        Tag tag = newTag(type, name);
+        if (type == 0) {
+            return new EndTag();
+        }
+        try {
+            String name = dis.readUTF();// new String(bytes, "UTF-8");
+            Tag tag = newTag(type, name);
 //        short length = dis.readShort();
 //        byte[] bytes = new byte[length];
 //        dis.readFully(bytes);
 
-        tag.load(dis);
-        return tag;
+            tag.load(dis);
+            return tag;
+        } catch (Exception e) {
+            System.out.println("Error: " + e.toString());
+            return new EndTag();
+        }
     }
 
     public static void writeNamedTag(Tag tag, DataOutput dos) throws IOException {
         dos.writeByte(tag.getId());
-        if (tag.getId() == Tag.TAG_End) return;
+        if (tag.getId() == Tag.TAG_End) {
+            return;
+        }
 
 //        byte[] bytes = tag.getName().getBytes("UTF-8");
 //        dos.writeShort(bytes.length);
@@ -117,60 +126,60 @@ public abstract class Tag {
 
     public static Tag newTag(byte type, String name) {
         switch (type) {
-        case TAG_End:
-            return new EndTag();
-        case TAG_Byte:
-            return new ByteTag(name);
-        case TAG_Short:
-            return new ShortTag(name);
-        case TAG_Int:
-            return new IntTag(name);
-        case TAG_Long:
-            return new LongTag(name);
-        case TAG_Float:
-            return new FloatTag(name);
-        case TAG_Double:
-            return new DoubleTag(name);
-        case TAG_Byte_Array:
-            return new ByteArrayTag(name);
-        case TAG_Int_Array:
-            return new IntArrayTag(name);
-        case TAG_String:
-            return new StringTag(name);
-        case TAG_List:
-            return new ListTag<Tag>(name);
-        case TAG_Compound:
-            return new CompoundTag(name);
+            case TAG_End:
+                return new EndTag();
+            case TAG_Byte:
+                return new ByteTag(name);
+            case TAG_Short:
+                return new ShortTag(name);
+            case TAG_Int:
+                return new IntTag(name);
+            case TAG_Long:
+                return new LongTag(name);
+            case TAG_Float:
+                return new FloatTag(name);
+            case TAG_Double:
+                return new DoubleTag(name);
+            case TAG_Byte_Array:
+                return new ByteArrayTag(name);
+            case TAG_Int_Array:
+                return new IntArrayTag(name);
+            case TAG_String:
+                return new StringTag(name);
+            case TAG_List:
+                return new ListTag<Tag>(name);
+            case TAG_Compound:
+                return new CompoundTag(name);
         }
         return null;
     }
 
     public static String getTagName(byte type) {
         switch (type) {
-        case TAG_End:
-            return "TAG_End";
-        case TAG_Byte:
-            return "TAG_Byte";
-        case TAG_Short:
-            return "TAG_Short";
-        case TAG_Int:
-            return "TAG_Int";
-        case TAG_Long:
-            return "TAG_Long";
-        case TAG_Float:
-            return "TAG_Float";
-        case TAG_Double:
-            return "TAG_Double";
-        case TAG_Byte_Array:
-            return "TAG_Byte_Array";
-        case TAG_Int_Array:
-            return "TAG_Int_Array";
-        case TAG_String:
-            return "TAG_String";
-        case TAG_List:
-            return "TAG_List";
-        case TAG_Compound:
-            return "TAG_Compound";
+            case TAG_End:
+                return "TAG_End";
+            case TAG_Byte:
+                return "TAG_Byte";
+            case TAG_Short:
+                return "TAG_Short";
+            case TAG_Int:
+                return "TAG_Int";
+            case TAG_Long:
+                return "TAG_Long";
+            case TAG_Float:
+                return "TAG_Float";
+            case TAG_Double:
+                return "TAG_Double";
+            case TAG_Byte_Array:
+                return "TAG_Byte_Array";
+            case TAG_Int_Array:
+                return "TAG_Int_Array";
+            case TAG_String:
+                return "TAG_String";
+            case TAG_List:
+                return "TAG_List";
+            case TAG_Compound:
+                return "TAG_Compound";
         }
         return "UNKNOWN";
     }
