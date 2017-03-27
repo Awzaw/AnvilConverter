@@ -12,7 +12,10 @@ import java.io.File;
 public class AnvilConverter {
 
     public static void main(String[] args) {
-
+        String format = "anvil";
+        if (args.length == 3){
+            format = args[2];
+        }
         File baseFolder;
         try {
             baseFolder = new File(args[0]);
@@ -36,8 +39,8 @@ public class AnvilConverter {
             return;
         }
 
-        System.out.println("Converting map to " + args[2]);
-        System.out.println("Format: " + (args[2].equalsIgnoreCase("pmanvil") ? "pmanvil" : "anvil"));
+        System.out.println("Converting map to " + format);
+        System.out.println("Format: " + (format.equalsIgnoreCase("pmanvil") ? "pmanvil" : "anvil"));
         storage.convertLevel(args[1], new ProgressListener() {
             private long timeStamp = System.currentTimeMillis();
 
@@ -56,7 +59,7 @@ public class AnvilConverter {
 
             public void progressStage(String string) {
             }
-        }, (args[2].equalsIgnoreCase("pmanvil") ? "pmanvil" : "anvil"));
+        }, (format.equalsIgnoreCase("pmanvil") ? "pmanvil" : "anvil"));
         System.out.println("Done!");
         System.out.println("To revert, replace level.dat with level.dat_mcr. Old mcr region files have not been modified.");
     }
