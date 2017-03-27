@@ -162,9 +162,8 @@ public class OldChunkStorage {
                                 break;
                             }
                         } catch (Exception e) {
-                            //???  
+                            //System.out.println(e.getMessage());
                         }
-
                     }
                 }
             }
@@ -250,10 +249,8 @@ public class OldChunkStorage {
 
     }
 
-public static byte[] reorderByteArray(byte[] array) {
-                StringBuilder result = new StringBuilder(getEmptyHex(4096));
-                StringBuilder myarray = new StringBuilder(new String(array));
-                myarray.setLength(4096);
+public static byte[] reorderByteArray(byte[] myarray) {
+                byte[] result = new byte[16 * 16 * 16];
 		if(myarray != result){
 			int i = 0;
 			for(int x = 0; x < 16; ++x){
@@ -261,21 +258,18 @@ public static byte[] reorderByteArray(byte[] array) {
 				for(int z = x; z < zM; z += 16){
 					int yM = z + 4096;
 					for(int y = z; y < yM; y += 256){
-                                            char newHex = myarray.charAt(y);
-                                                result.setCharAt(i, newHex);
+                                                result[i] =  myarray[y];
 						++i;
 					}
 				}
 			}
 		}
-		return result.toString().getBytes();
+		return result;
 	}
 
-	public static byte[] reorderNibbleArray(byte[] array) {
-                StringBuilder commonValue = new StringBuilder(Integer.toHexString(0));
-		StringBuilder result = new StringBuilder(getEmptyHex(2048));
-                StringBuilder myarray = new StringBuilder(array.toString());
-                myarray.setLength(2048);
+	public static byte[] reorderNibbleArray(byte[] myarray) {
+                byte commonValue = 0x00;
+		byte[] result = new byte[16 * 16 * 8];
 		if(myarray != result){
 			int i = 0;
 			for(int x = 0; x < 8; ++x){
@@ -284,13 +278,13 @@ public static byte[] reorderByteArray(byte[] array) {
 					for(int y = 0; y < 8; ++y){
 						int j = ((y << 8) | zx);
 						int j80 = (j | 0x80);
-						if (myarray.charAt(j) == commonValue.charAt(0) && myarray.charAt(j80) == commonValue.charAt(0)) {
+						if (myarray[j] == commonValue && myarray[j80] == commonValue) {
 							//values are already filled
 						} else {
-							char i1 = (char) myarray.charAt(j);
-							char i2 = (char) myarray.charAt(j80);
-							result.setCharAt(i, (char) ((i2 << 4) | (i1 & 0x0f)));
-							result.setCharAt((i | 0x80), (char) ((i1 >> 4) | (i2 & 0xf0)));
+							byte i1 = myarray[j];
+							byte i2 = myarray[j80];
+							result[i] = (byte) ((i2 << 4) | (i1 & 0x0f));
+							result[i | 0x80] = (byte) ((i1 >> 4) | (i2 & 0xf0));
 						}
 						i++;
 					}
@@ -299,15 +293,7 @@ public static byte[] reorderByteArray(byte[] array) {
 			}
 		}
 
-		return result.toString().getBytes();
+		return result;
 	}
         
-
-    public static String getEmptyHex(int count) {
-        StringBuilder emptyHex = new StringBuilder();
-        for (int c=0; c < count; c++){
-            emptyHex.append(Integer.toHexString(0));
-        }
-        return emptyHex.toString();
-    }
 }
