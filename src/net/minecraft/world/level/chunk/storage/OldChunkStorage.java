@@ -284,7 +284,7 @@ public static byte[] reorderByteArray(byte[] myarray) {
 							byte i1 = myarray[j];
 							byte i2 = myarray[j80];
 							result[i] = (byte) ((i2 << 4) | (i1 & 0x0f));
-							result[i | 0x80] = (byte) ((i1 >> 4) | (i2 & 0xf0));
+							result[i | 0x80] = (byte) (((i1 & 0xff) >>> 4) | (i2 & 0xf0));
 						}
 						i++;
 					}
